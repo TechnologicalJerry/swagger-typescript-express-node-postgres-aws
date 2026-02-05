@@ -15,8 +15,8 @@ export const generateToken = (payload: Omit<TokenPayload, 'jti'>, options?: Gene
   const signPayload = options?.jti ? { ...payload, jti: options.jti } : payload;
   return jwt.sign(signPayload, env.JWT_SECRET, {
     expiresIn: env.JWT_EXPIRES_IN,
-    jwtid: options?.jti,
-  });
+    ...(options?.jti && { jwtid: options.jti }),
+  } as jwt.SignOptions);
 };
 
 export const verifyToken = (token: string): TokenPayload => {
