@@ -23,12 +23,12 @@ export class ProductService {
     try {
       const productData: ProductCreationAttributes = {
         name: data.name,
-        description: data.description,
         price: data.price,
-        stock: data.stock || 0,
-        imageUrl: data.imageUrl,
+        stock: data.stock ?? 0,
         userId: data.userId,
       };
+      if (data.description !== undefined) productData.description = data.description;
+      if (data.imageUrl !== undefined) productData.imageUrl = data.imageUrl;
 
       const product = await Product.create(productData);
       return product;
