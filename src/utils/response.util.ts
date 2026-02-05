@@ -4,7 +4,7 @@ export interface ApiResponse<T = unknown> {
   success: boolean;
   message: string;
   data?: T;
-  error?: string;
+  error?: string | undefined;
 }
 
 export const sendSuccess = <T>(res: Response, data: T, message = 'Success', statusCode = 200): void => {
@@ -20,7 +20,7 @@ export const sendError = (res: Response, message: string, statusCode = 400, erro
   const response: ApiResponse = {
     success: false,
     message,
-    error,
+    ...(error !== undefined && { error }),
   };
   res.status(statusCode).json(response);
 };
