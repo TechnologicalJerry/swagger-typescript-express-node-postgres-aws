@@ -50,14 +50,20 @@ export class UserService {
       const userData: UserCreationAttributes = {
         email: data.email,
         password: hashedPassword,
-        firstName: data.firstName?.trim() || undefined,
-        lastName: data.lastName?.trim() || undefined,
-        userName: data.userName?.trim() || undefined,
-        gender: data.gender?.trim() || undefined,
-        dob: data.dob ? new Date(data.dob) : undefined,
-        phone: data.phone?.trim() || undefined,
         isActive: true,
       };
+      const trimmedFirst = data.firstName?.trim();
+      const trimmedLast = data.lastName?.trim();
+      const trimmedUserName = data.userName?.trim();
+      const trimmedGender = data.gender?.trim();
+      const parsedDob = data.dob ? new Date(data.dob) : undefined;
+      const trimmedPhone = data.phone?.trim();
+      if (trimmedFirst !== undefined && trimmedFirst !== '') userData.firstName = trimmedFirst;
+      if (trimmedLast !== undefined && trimmedLast !== '') userData.lastName = trimmedLast;
+      if (trimmedUserName !== undefined && trimmedUserName !== '') userData.userName = trimmedUserName;
+      if (trimmedGender !== undefined && trimmedGender !== '') userData.gender = trimmedGender;
+      if (parsedDob !== undefined) userData.dob = parsedDob;
+      if (trimmedPhone !== undefined && trimmedPhone !== '') userData.phone = trimmedPhone;
 
       const user = await User.create(userData);
 
