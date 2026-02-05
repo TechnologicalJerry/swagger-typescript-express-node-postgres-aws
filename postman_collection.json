@@ -125,6 +125,19 @@
             },
             "description": "Get current user profile (requires authentication)"
           }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/logout",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "logout"]
+            },
+            "description": "Record logout for current token. Session is marked logged_out in user_sessions table."
+          }
         }
       ]
     },
