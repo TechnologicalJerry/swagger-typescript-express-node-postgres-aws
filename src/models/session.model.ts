@@ -86,9 +86,9 @@ Session.init(
     timestamps: true,
     indexes: [
       { fields: ['userId'] },
-      { fields: ['tokenId'] },
+      { fields: ['token_id'] },   // DB column name (model attr tokenId has field: 'token_id')
       { fields: ['status'] },
-      { fields: ['login_at'] },
+      { fields: ['login_at'] },  // DB column name (model attr loginAt has field: 'login_at')
     ],
   }
 );
