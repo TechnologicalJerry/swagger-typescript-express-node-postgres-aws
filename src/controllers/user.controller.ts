@@ -6,7 +6,11 @@ import { logger } from '../config/logger';
 export class UserController {
   async getUserById(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const { id } = req.params;
+      const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+      if (id === undefined) {
+        sendError(res, 'User ID required', 400);
+        return;
+      }
       const userId = parseInt(id, 10);
 
       if (isNaN(userId)) {
