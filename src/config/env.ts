@@ -7,7 +7,8 @@ export const env = {
   NODE_ENV: process.env.NODE_ENV || 'development',
   PORT: parseInt(process.env.PORT || '3000', 10),
   
-  // Database
+  // Database (use DATABASE_URL for Supabase/cloud, or individual vars)
+  DATABASE_URL: process.env.DATABASE_URL || '',
   DB_HOST: process.env.DB_HOST || 'localhost',
   DB_PORT: parseInt(process.env.DB_PORT || '5432', 10),
   DB_NAME: process.env.DB_NAME || 'postgres',
