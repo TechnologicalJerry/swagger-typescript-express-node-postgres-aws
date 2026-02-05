@@ -1,6 +1,7 @@
+import crypto from 'crypto';
 import { User, UserCreationAttributes } from '../models/user.model';
 import { hashPassword, comparePassword } from '../utils/password.util';
-import { generateToken, TokenPayload } from '../utils/jwt.util';
+import { generateToken } from '../utils/jwt.util';
 import { logger } from '../config/logger';
 
 export interface RegisterUserData {
@@ -60,14 +61,15 @@ export class UserService {
 
       const user = await User.create(userData);
 
-      // Generate token
-      const token = generateToken({ userId: user.id, email: user.email });
+      // Generate token with jti for session tracking
+      const jti = crypto.randomUUID();
+      const token = generateToken({ userId: user.id, email: user.email }, { jti });
 
       // Remove password from response
       const userResponse = user.toJSON();
       delete (userResponse as { password?: string }).password;
 
-      return { user: userResponse as User, token };
+      return { user: userResponse as User, token, jti };
     } catch (error) {
       logger.error('Error registering user', error);
       throw error;
@@ -93,14 +95,15 @@ export class UserService {
         throw new Error('Invalid email or password');
       }
 
-      // Generate token
-      const token = generateToken({ userId: user.id, email: user.email });
+      // Generate token with jti for session tracking
+      const jti = crypto.randomUUID();
+      const token = generateToken({ userId: user.id, email: user.email }, { jti });
 
       // Remove password from response
       const userResponse = user.toJSON();
       delete (userResponse as { password?: string }).password;
 
-      return { user: userResponse as User, token };
+      return { user: userResponse as User, token, jti };
     } catch (error) {
       logger.error('Error logging in user', error);
       throw error;
