@@ -4,11 +4,18 @@ import { env } from '../config/env';
 export interface TokenPayload {
   userId: number;
   email: string;
+  jti?: string; // token id - links to user_sessions.tokenId for login/logout tracking
 }
 
-export const generateToken = (payload: TokenPayload): string => {
-  return jwt.sign(payload, env.JWT_SECRET, {
+export interface GenerateTokenOptions {
+  jti?: string;
+}
+
+export const generateToken = (payload: Omit<TokenPayload, 'jti'>, options?: GenerateTokenOptions): string => {
+  const signPayload = options?.jti ? { ...payload, jti: options.jti } : payload;
+  return jwt.sign(signPayload, env.JWT_SECRET, {
     expiresIn: env.JWT_EXPIRES_IN,
+    jwtid: options?.jti,
   });
 };
 
