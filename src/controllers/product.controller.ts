@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { productService } from '../services/product.service';
+import { productService, CreateProductData, UpdateProductData } from '../services/product.service';
 import { sendSuccess, sendError } from '../utils/response.util';
 import { logger } from '../config/logger';
 
@@ -12,15 +12,15 @@ export class ProductController {
       }
 
       const { name, description, price, stock, imageUrl } = req.body;
-      
-      const product = await productService.createProduct({
+      const createData: CreateProductData = {
         name,
-        description,
         price: parseFloat(price),
-        stock: stock ? parseInt(stock, 10) : undefined,
-        imageUrl,
+        stock: stock !== undefined && stock !== '' ? parseInt(String(stock), 10) : 0,
         userId: req.user.userId,
-      });
+      };
+      if (description !== undefined) createData.description = description;
+      if (imageUrl !== undefined) createData.imageUrl = imageUrl;
+      const product = await productService.createProduct(createData);
 
       sendSuccess(res, product, 'Product created successfully', 201);
     } catch (error) {
@@ -31,7 +31,11 @@ export class ProductController {
 
   async getProductById(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const { id } = req.params;
+      const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+      if (id === undefined) {
+        sendError(res, 'Product ID required', 400);
+        return;
+      }
       const productId = parseInt(id, 10);
 
       if (isNaN(productId)) {
@@ -73,7 +77,11 @@ export class ProductController {
         return;
       }
 
-      const { id } = req.params;
+      const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+      if (id === undefined) {
+        sendError(res, 'Product ID required', 400);
+        return;
+      }
       const productId = parseInt(id, 10);
 
       if (isNaN(productId)) {
@@ -82,18 +90,14 @@ export class ProductController {
       }
 
       const { name, description, price, stock, imageUrl } = req.body;
-      
-      const product = await productService.updateProduct(
-        productId,
-        {
-          name,
-          description,
-          price: price ? parseFloat(price) : undefined,
-          stock: stock ? parseInt(stock, 10) : undefined,
-          imageUrl,
-        },
-        req.user.userId
-      );
+      const updateData: UpdateProductData = {};
+      if (name !== undefined) updateData.name = name;
+      if (description !== undefined) updateData.description = description;
+      if (price !== undefined) updateData.price = parseFloat(String(price));
+      if (stock !== undefined) updateData.stock = parseInt(String(stock), 10);
+      if (imageUrl !== undefined) updateData.imageUrl = imageUrl;
+
+      const product = await productService.updateProduct(productId, updateData, req.user.userId);
 
       sendSuccess(res, product, 'Product updated successfully');
     } catch (error) {
@@ -109,7 +113,11 @@ export class ProductController {
         return;
       }
 
-      const { id } = req.params;
+      const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+      if (id === undefined) {
+        sendError(res, 'Product ID required', 400);
+        return;
+      }
       const productId = parseInt(id, 10);
 
       if (isNaN(productId)) {
