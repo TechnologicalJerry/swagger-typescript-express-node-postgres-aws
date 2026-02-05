@@ -1,8 +1,16 @@
 import { s3, awsConfig } from '../config/aws';
 import { logger } from '../config/logger';
 
+/** Multer file type (avoids global Express.Multer when "types" is restricted in tsconfig). */
 export interface UploadFileParams {
-  file: Express.Multer.File;
+  file: {
+    fieldname: string;
+    originalname: string;
+    encoding: string;
+    mimetype: string;
+    size: number;
+    buffer: Buffer;
+  };
   folder?: string;
   fileName?: string;
 }
