@@ -12,8 +12,8 @@ export interface GenerateTokenOptions {
 }
 
 export const generateToken = (payload: Omit<TokenPayload, 'jti'>, options?: GenerateTokenOptions): string => {
-  const signPayload = options?.jti ? { ...payload, jti: options.jti } : payload;
-  return jwt.sign(signPayload, env.JWT_SECRET, {
+  // Don't add jti to payload when using jwtid option - jsonwebtoken sets jti from jwtid automatically
+  return jwt.sign(payload, env.JWT_SECRET, {
     expiresIn: env.JWT_EXPIRES_IN,
     ...(options?.jti && { jwtid: options.jti }),
   } as jwt.SignOptions);
