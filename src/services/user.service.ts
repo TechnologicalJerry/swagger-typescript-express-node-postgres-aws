@@ -27,7 +27,7 @@ export interface UpdateUserData {
 }
 
 export class UserService {
-  async register(data: RegisterUserData): Promise<{ user: User; token: string }> {
+  async register(data: RegisterUserData): Promise<{ user: User; token: string; jti: string }> {
     try {
       // Check if user already exists
       const existingUser = await User.findOne({ where: { email: data.email } });
@@ -76,7 +76,7 @@ export class UserService {
     }
   }
 
-  async login(data: LoginUserData): Promise<{ user: User; token: string }> {
+  async login(data: LoginUserData): Promise<{ user: User; token: string; jti: string }> {
     try {
       // Find user
       const user = await User.findOne({ where: { email: data.email } });
